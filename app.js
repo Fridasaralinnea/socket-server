@@ -8,20 +8,21 @@ const port = 8300;
 app.use(cors());
 
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+// const io = require('socket.io')(server);
 
-io.origins(['https://jsramverk.fridasaralinnea.me:443']);
+// io.origins(['https://jsramverk.fridasaralinnea.me:443']);
 
-// const io = require('socket.io')(server, {
-//     cors: {
-//         origin: "http://localhost:8080",
-//         methods: ["GET", "POST"]
-//     }
-//     // allowRequest: (req, callback) => {
-//     //     const noOriginHeader = req.headers.origin === undefined;
-//     //     callback(null, noOriginHeader);
-//     // }
-// });
+const io = require('socket.io')(server, {
+    cors: {
+        origin: 'https://jsramverk.fridasaralinnea.me:443',
+        methods: ["GET", "POST"],
+        allowedHeaders: ["content-type"]
+    }
+    // allowRequest: (req, callback) => {
+    //     const noOriginHeader = req.headers.origin === undefined;
+    //     callback(null, noOriginHeader);
+    // }
+});
 
 
 
