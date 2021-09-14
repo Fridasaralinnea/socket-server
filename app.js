@@ -14,7 +14,8 @@ const server = require('http').createServer(app);
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'https://jsramverk.fridasaralinnea.me:443',
+        // origin: 'https://jsramverk.fridasaralinnea.me:443',
+        origin: 'http://localhost:4200',
         methods: ["GET", "POST"],
         allowedHeaders: ["content-type"]
     }
