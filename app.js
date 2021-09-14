@@ -14,7 +14,7 @@ const server = require('http').createServer(app);
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: '*:*',
+        origin: '*',
         // origin: 'https://jsramverk.fridasaralinnea.me/chat:443',
         // origin: 'http://localhost:4200',
         methods: ["GET", "POST"],
