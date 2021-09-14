@@ -13,12 +13,13 @@ const server = require('http').createServer(app);
 // io.origins(['https://jsramverk.fridasaralinnea.me:443']);
 
 const io = require('socket.io')(server, {
-    cors: {
-        origin: 'https://jsramverk.fridasaralinnea.me/chat:*',
-        // origin: 'http://localhost:4200',
-        methods: ["GET", "POST"],
-        allowedHeaders: ["content-type"]
-    }
+    origins: '*:*'
+    // cors: {
+    //     origin: 'https://jsramverk.fridasaralinnea.me/chat:*',
+    //     // origin: 'http://localhost:4200',
+    //     methods: ["GET", "POST"],
+    //     allowedHeaders: ["content-type"]
+    // }
     // allowRequest: (req, callback) => {
     //     const noOriginHeader = req.headers.origin === undefined;
     //     callback(null, noOriginHeader);
