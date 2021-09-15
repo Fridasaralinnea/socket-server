@@ -16,11 +16,11 @@ const server = require('http').createServer(app);
 
 const io = require('socket.io')(server, {
     cors: {
-        // origin: '*',
-        origin: 'https://jsramverk.fridasaralinnea.me',
+        origin: '*',
+        // origin: 'https://jsramverk.fridasaralinnea.me',
         // origin: 'http://localhost:4200',
-        methods: ["GET", "POST"]
-        // allowedHeaders: ["content-type"]
+        methods: ["GET", "POST"],
+        allowedHeaders: ["content-type"]
     }
     // allowRequest: (req, callback) => {
     //     const noOriginHeader = req.headers.origin === undefined;
