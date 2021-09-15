@@ -30,23 +30,30 @@ const io = require('socket.io')(server, {
 
 
 
-io.on('connection', async function (socket) {
+io.on('connection', function (socket) {
     console.info("User connected");
-    // Return a JSON object with list of all documents within the collection.
-    try {
+
+    socket.on('old messages', async function () {
         let res = await findInCollection(dsn, "crowd", {}, {}, 0);
         io.emit('old messages', res);
         console.log(res);
-        response.json(res);
-    } catch (err) {
-        console.log(err);
-        response.json(err);
-    }
+    })
+
+    // Return a JSON object with list of all documents within the collection.
+    // try {
+    //     let res = await findInCollection(dsn, "crowd", {}, {}, 0);
+    //     io.emit('old messages', res);
+    //     console.log(res);
+    //     response.json(res);
+    // } catch (err) {
+    //     console.log(err);
+    //     response.json(err);
+    // }
 
     socket.on('chat message',async function (message) {
         io.emit('chat message', message);
         await saveToCollection(dsn, "crowd", message);
-        console.log(messsage);
+        console.log(message);
     });
 });
 
