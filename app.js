@@ -30,7 +30,7 @@ const io = require('socket.io')(server, {
 
 
 
-io.on('connection', function (socket) {
+io.on('connection', async function (socket) {
     console.info("User connected");
     // Return a JSON object with list of all documents within the collection.
     try {
@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
         response.json(err);
     }
 
-    socket.on('chat message', function (message) {
+    socket.on('chat message',async function (message) {
         io.emit('chat message', message);
         await saveToCollection(dsn, "crowd", message);
         console.log(messsage);
