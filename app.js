@@ -35,7 +35,7 @@ io.on('connection', async function (socket) {
     // Return a JSON object with list of all documents within the collection.
     try {
         let res = await findInCollection(dsn, "crowd", {}, {}, 0);
-        io.emit('chat', res)
+        io.emit('old messages', res)
         console.log(res);
         response.json(res);
     } catch (err) {
