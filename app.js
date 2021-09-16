@@ -1,8 +1,15 @@
 // app.js
+require("dotenv").config();
+
 const express = require('express');
 const cors = require('cors');
-const mongo = require("mongodb").MongoClient;
-const dsn =  process.env.DBWEBB_DSN || "mongodb://localhost:27017/chatdb";
+const mongodb = require("mongodb");
+const MongoClient = require("mongodb").MongoClient;
+
+// const mongo = require("mongodb").MongoClient;
+// const dsn =  process.env.DBWEBB_DSN || "mongodb://localhost:27017/chatdb";
+
+
 
 const app = express();
 const port = 8300;
@@ -22,10 +29,6 @@ const io = require('socket.io')(server, {
         methods: ["GET", "POST"],
         allowedHeaders: ["content-type"]
     }
-    // allowRequest: (req, callback) => {
-    //     const noOriginHeader = req.headers.origin === undefined;
-    //     callback(null, noOriginHeader);
-    // }
 });
 
 
@@ -33,28 +36,18 @@ const io = require('socket.io')(server, {
 io.on('connection', function (socket) {
     console.info("User connected");
 
-    socket.on('old messages', async function () {
-        let res = await findInCollection(dsn, "crowd", {}, {}, 0);
-        io.emit('old messages', res);
-        console.log(res);
-    })
-
-    // Return a JSON object with list of all documents within the collection.
-    // try {
-    //     let res = await findInCollection(dsn, "crowd", {}, {}, 0);
-    //     io.emit('old messages', res);
-    //     console.log(res);
-    //     response.json(res);
-    // } catch (err) {
-    //     console.log(err);
-    //     response.json(err);
-    // }
-
-    socket.on('chat message',async function (message) {
-        io.emit('chat message', message);
-        await saveToCollection(dsn, "crowd", message);
+    socket.on('chatMessage',async function (message) {
+        io.emit('chatMessage', message);
+        await saveToCollection("chat", message);
         console.log(message);
     });
+});
+
+app.get('/', async (req, res) => {
+    // res.send("Heyyy");
+    let chat = await findInCollection("chat", {}, {}, 0);
+
+    res.json(chat);
 });
 
 
@@ -67,7 +60,6 @@ server.listen(port, () => console.log(`Example app listening on port ${port}!`))
  *
  * @async
  *
- * @param {string} dsn        DSN to connect to database.
  * @param {string} colName    Name of collection.
  * @param {object} document   Document to save.
  *
@@ -75,9 +67,15 @@ server.listen(port, () => console.log(`Example app listening on port ${port}!`))
  *
  * @return {Promise<array>} The resultset as an array.
  */
-async function saveToCollection(dsn, colName, document) {
-    const client  = await mongo.connect(dsn);
-    const db = await client.db();
+async function saveToCollection(colName, document) {
+    const client  = await MongoClient.connect(process.env.DATABASE_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        // tls: true,
+        tlsCAFile: "./ca-certificate.crt",
+    });
+    console.log(client);
+    const db = await client.db("chat");
     const col = await db.collection(colName);
     await col.insertOne(document);
 
@@ -91,7 +89,6 @@ async function saveToCollection(dsn, colName, document) {
  *
  * @async
  *
- * @param {string} dsn        DSN to connect to database.
  * @param {string} colName    Name of collection.
  * @param {object} criteria   Search criteria.
  * @param {object} projection What to project in results.
@@ -101,9 +98,16 @@ async function saveToCollection(dsn, colName, document) {
  *
  * @return {Promise<array>} The resultset as an array.
  */
-async function findInCollection(dsn, colName, criteria, projection, limit) {
-    const client  = await mongo.connect(dsn);
-    const db = await client.db();
+async function findInCollection(colName, criteria, projection, limit) {
+    const client  = await MongoClient.connect(process.env.DATABASE_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        // tls: true,
+        tlsCAFile: "./ca-certificate.crt",
+    });
+    console.log("#### Getting chat data!!!");
+    console.log(client);
+    const db = await client.db("chat");
     const col = await db.collection(colName);
     const res = await col.find(criteria, projection).limit(limit).toArray();
 
